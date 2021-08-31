@@ -1,0 +1,98 @@
+body {
+  font-family: 'Times New Roman', Times, serif;
+}
+
+ul {
+  list-style: none;
+}
+
+li[data-link='true']::after {
+  content: url('../image/search.svg');
+  width: 5px;
+  height: 5px;
+}
+
+.tree {
+  font-size: 30px;
+  font-weight: 500;
+}
+
+.tree span {
+  cursor: pointer;
+}
+
+.tree span:hover {
+  font-weight: 700;
+}
+
+.form-inline {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 40px;
+}
+
+.btn {
+  cursor: pointer;
+  width: 150px;
+  height: 50px;
+  margin-left: 40px;
+  border: 0;
+}
+
+.btn:focus,
+.btn:hover {
+  background-color: blue;
+  color: wheat;
+}
+
+.form-control {
+  width: 400px;
+  height: 50px;
+  padding-left: 15px;
+}
+
+.box-for-table {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 100px;
+}
+
+.table-car {
+  border: 3px solid;
+  width: auto;
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: 1;
+}
+
+.table-data {
+  text-align: center;
+  font-weight: 600;
+}
+
+.show::before {
+  content: '-';
+  margin-right: 10px;
+  font-size: 30px;
+  text-decoration: none;
+}
+
+.hide::before {
+  content: '+';
+  margin-right: 10px;
+  font-size: 30px;
+  text-decoration: none;
+}
+
+.none {
+  margin-left: 27px;
+  text-decoration: none;
+}
+
+.tree-list-item {
+  margin-top: 30px;
+}
