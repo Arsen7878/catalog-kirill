@@ -4,12 +4,21 @@ body {
 
 ul {
   list-style: none;
+  margin: 0;
+  padding: 0;
 }
 
 li[data-link='true']::after {
-  content: url('../image/search.svg');
+  content: '';
   width: 5px;
   height: 5px;
+}
+
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  margin-top: 50px;
 }
 
 .tree {
@@ -58,7 +67,7 @@ li[data-link='true']::after {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-top: 100px;
+  margin-right: 100px;
 }
 
 .table-car {
@@ -90,9 +99,53 @@ li[data-link='true']::after {
 
 .none {
   margin-left: 27px;
-  text-decoration: none;
+  color: rgb(113, 198, 237);
 }
 
-.tree-list-item {
+.tree-list-item:not(:first-child) {
   margin-top: 30px;
+}
+
+.js-schemes {
+  margin-left: 100px;
+}
+
+.window__table--th {
+  outline: 2px solid red;
+  font-size: 30px;
+  font-weight: 500;
+}
+
+.window__table--th {
+  margin-left: 30px;
+}
+
+.window__scheme {
+  display: flex;
+}
+
+.table {
+  width: 100%;
+}
+
+.table__title {
+  padding: 10px;
+}
+
+.table__data {
+  padding: 10px;
+}
+
+.thead {
+  background-color: rgb(114, 139, 206);
+}
+
+.table-text {
+  font-size: 18px;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.trumb-for-scheme {
+  border: 5px solid black;
 }

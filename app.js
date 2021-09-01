@@ -1,3 +1,7 @@
+let ssdCar = '';
+let vehicleidCar = '';
+let catalogCar = '';
+
 function getPostOem() {
   const request = new XMLHttpRequest();
   request.open('POST', 'https://autodoka-srv.com/Meric/hs/tecdoc/oem/');
@@ -93,7 +97,7 @@ function getPostTree(ssd, carid, code) {
 function passengerTree(tree) {
   treeRef.insertAdjacentHTML('beforeend', `<ul class ="tree-list"></ul>`);
 
-  console.log(tree);
+  // console.log(tree);
   tree.map((obj, index) => {
     // ! ================================== уровень 1
     const name = obj.name;
@@ -260,10 +264,11 @@ function carlist(datacar) {
   if (datacar.length > 0) {
     const dataCarString = datacar[0];
     const brand = dataCarString.brand;
-    const catalog = dataCarString.catalog;
     const name = dataCarString.name;
-    const ssd = dataCarString.ssd;
-    const vehicleid = dataCarString.vehicleid;
+
+    catalogCar = dataCarString.catalog;
+    ssdCar = dataCarString.ssd;
+    vehicleidCar = dataCarString.vehicleid;
 
     const keys = Object.keys(dataCarString);
     const values = Object.values(dataCarString);
@@ -310,21 +315,30 @@ function carlist(datacar) {
       }
     });
 
-    getPostTree(ssd, vehicleid, catalog);
+    getPostTree(ssdCar, vehicleidCar, catalogCar);
   } else {
     alert('Ого, паря, тебе поймали, вычислили твой IP(загуглишь потом)');
   }
 }
 
 function onClickTree(event) {
+  if (event.target.classList.contains('none')) {
+    const targetID = event.target.parentNode.dataset.id;
+    // alert(
+    //   ssdCar + vehicleidCar + catalogCar + event.target.parentNode.dataset.id
+    // );
+    // console.log(event.target.parentNode.dataset.id);
+    postShowLinks(catalogCar, ssdCar, vehicleidCar, targetID);
+  }
+
   if (event.target.nodeName !== 'SPAN') {
     return;
   }
+
   let childrenContainer = event.target.parentNode.querySelector('ul');
 
-  //
   // ** Если нет вложеных детей
-  //
+
   if (!childrenContainer) {
     return;
   }
@@ -338,8 +352,94 @@ function onClickTree(event) {
     event.target.classList.add('show');
     event.target.classList.remove('hide');
   }
+}
 
-  const allLinks = treeRef.querySelectorAll('li[data-link="true"]');
+function postShowLinks(code, ssd, carid, group) {
+  const request = new XMLHttpRequest();
+  request.open('POST', 'https://autodoka-srv.com/Meric/hs/tecdoc/schem/');
+  request.responseType = 'json';
+
+  let bodyS = {
+    code,
+    ssd,
+    carid,
+    group,
+  };
+
+  const body = JSON.stringify(bodyS);
+
+  request.setRequestHeader('Content-Type', 'application/json');
+
+  request.setRequestHeader('Token', 'sAnWaCmRqtrdEySnoXA6l5tFpP7qmETl');
+
+  request.onload = function () {
+    // console.log(request.response.data);
+
+    onOpenImage(request.response.data);
+  };
+
+  request.send(body);
+}
+
+function onOpenImage(data) {
+  const dataSet = data;
+  console.log(dataSet);
+
+  dataSet.map((el, index) => {
+    const imageUrl = el.imageurl;
+    const codeImage = el.code;
+    const name = el.name;
+    const detailsMatch = el.detailsMatch;
+
+    schemesBox.insertAdjacentHTML(
+      'beforeend',
+
+      ` <div class="trumb-for-scheme">
+    <p class="table-text">${codeImage} ${name}</p>
+    <div class="window__scheme">
+      <button type="button" class="window__scheme--button">
+        <img src="${imageUrl}" alt="" width="320" />
+      </button>
+      <table align="center" class="table" rules="all">
+        <thead class="thead">
+          <tr>
+            <th class="table__title">№ Детали</th>
+            <th class="table__title">OEM</th>
+            <th class="table__title">Наименование детали</th>
+          </tr>
+        </thead>
+        <tbody  class="insert_html">
+          
+        </tbody>
+      </table>
+    </div>
+  </div>`
+    );
+
+    console.log(detailsMatch);
+    detailsMatch.map((detail) => {
+      const codeOnImage = detail.codeonimage;
+      const detailName = detail.detailname;
+      const oem = detail.oem;
+
+      const tableData = schemesBox.querySelectorAll('.insert_html')[index];
+
+      tableData.insertAdjacentHTML(
+        'beforeend',
+        ` <tr>
+        <td>
+          <div class="table__data"><a href="">${codeOnImage}</a></div>
+        </td>
+        <td>
+          <div class="table__data"><a href="">${oem}</a></div>
+        </td>
+        <td>
+          <div class="table__data"><a href="">${detailName}</a></div>
+        </td>
+      </tr> `
+      );
+    });
+  });
 }
 
 const listRef = document.querySelector('.js-card-table');
@@ -347,6 +447,7 @@ const searchRef = document.querySelector('.search-form ');
 const titleTableRef = document.querySelector('[data-title]');
 const dataTableRef = document.querySelector('[data-table__data]');
 const treeRef = document.querySelector('.tree');
+const schemesBox = document.querySelector('.js-schemes');
 
 searchRef.addEventListener('submit', onSearch);
 treeRef.addEventListener('click', onClickTree);
