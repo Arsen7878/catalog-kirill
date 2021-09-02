@@ -1,6 +1,7 @@
 let ssdCar = '';
 let vehicleidCar = '';
 let catalogCar = '';
+let unitid = '';
 
 function getPostOem() {
   const request = new XMLHttpRequest();
@@ -243,6 +244,8 @@ function passengerTree(tree) {
 }
 
 function onSearch(element) {
+  //!<-------------- ТУТ МЕНЯТЬ ВИН
+
   element.preventDefault();
 
   // const searchQuery = element.currentTarget.elements.query.value;
@@ -250,7 +253,7 @@ function onSearch(element) {
   const searchQuery = 'WVWZZZ1JZYD150112';
 
   if (searchQuery === '') {
-    alert('Петушинное гнездо, шо ты вводишь?');
+    alert('Введите корректные данные!');
   } else {
     if (searchQuery.length <= 8) {
       getPostGos(searchQuery);
@@ -382,14 +385,16 @@ function postShowLinks(code, ssd, carid, group) {
 }
 
 function onOpenImage(data) {
+  schemesBox.innerHTML = '';
   const dataSet = data;
-  console.log(dataSet);
+  // console.log(dataSet);
 
   dataSet.map((el, index) => {
     const imageUrl = el.imageurl;
     const codeImage = el.code;
     const name = el.name;
     const detailsMatch = el.detailsMatch;
+    unitid = el.unitid;
 
     schemesBox.insertAdjacentHTML(
       'beforeend',
@@ -397,10 +402,10 @@ function onOpenImage(data) {
       ` <div class="trumb-for-scheme">
     <p class="table-text">${codeImage} ${name}</p>
     <div class="window__scheme">
-      <button type="button" class="window__scheme--button">
-        <img src="${imageUrl}" alt="" width="320" />
+      <button data-action="submit__form" type="submit" class="window__scheme--button">
+        <img src="${imageUrl}" alt="" width="320"  data-unitid="${unitid}" />
       </button>
-      <table align="center" class="table" rules="all">
+      <table class="table" rules="all">
         <thead class="thead">
           <tr>
             <th class="table__title">№ Детали</th>
@@ -416,7 +421,6 @@ function onOpenImage(data) {
   </div>`
     );
 
-    console.log(detailsMatch);
     detailsMatch.map((detail) => {
       const codeOnImage = detail.codeonimage;
       const detailName = detail.detailname;
@@ -428,7 +432,7 @@ function onOpenImage(data) {
         'beforeend',
         ` <tr>
         <td>
-          <div class="table__data"><a href="">${codeOnImage}</a></div>
+          <div class="table__data"><a href="./port.html">${codeOnImage}</a></div>
         </td>
         <td>
           <div class="table__data"><a href="">${oem}</a></div>
@@ -439,7 +443,52 @@ function onOpenImage(data) {
       </tr> `
       );
     });
+
+    const imageRef = document.querySelector(`[data-unitid = "${unitid}"]`);
+    imageRef.addEventListener('click', onClickImage);
   });
+}
+
+function onClickImage(e) {
+  backDrop.classList.add('is-open');
+
+  const efro = e.target.dataset.unitid;
+
+  postGetImageLink(ssdCar, efro, catalogCar);
+}
+
+function postGetImageLink(ssd, unit, code) {
+  const request = new XMLHttpRequest();
+  request.open('POST', 'https://autodoka-srv.com/Meric/hs/tecdoc/detail/');
+  request.responseType = 'json';
+
+  let bodyS = {
+    ssd,
+    unit,
+    code,
+  };
+
+  const body = JSON.stringify(bodyS);
+
+  request.setRequestHeader('Content-Type', 'application/json');
+  request.setRequestHeader('Token', 'sAnWaCmRqtrdEySnoXA6l5tFpP7qmETl');
+  request.onload = function () {
+    console.dir(request.response.data);
+    imageOfBackdrop(request.response.data);
+  };
+
+  request.send(body);
+}
+
+function imageOfBackdrop(params) {
+  const src = params.unit.img;
+  const name = params.unit.name;
+  backdropImage.src = src;
+}
+
+function onCloseBackdrop(e) {
+  backDrop.classList.remove('is-open');
+  backdropImage.src = '';
 }
 
 const listRef = document.querySelector('.js-card-table');
@@ -448,6 +497,10 @@ const titleTableRef = document.querySelector('[data-title]');
 const dataTableRef = document.querySelector('[data-table__data]');
 const treeRef = document.querySelector('.tree');
 const schemesBox = document.querySelector('.js-schemes');
+const backDrop = document.querySelector('.backdrop');
+const btnCloseBackdrop = document.querySelector('.backdrop__button');
+const backdropImage = document.querySelector('.backdrop__image');
 
 searchRef.addEventListener('submit', onSearch);
 treeRef.addEventListener('click', onClickTree);
+btnCloseBackdrop.addEventListener('click', onCloseBackdrop);

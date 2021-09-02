@@ -1,3 +1,8 @@
+:root {
+  --timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  --animation-duration: 250ms;
+}
+
 body {
   font-family: 'Times New Roman', Times, serif;
 }
@@ -126,13 +131,16 @@ li[data-link='true']::after {
 
 .table {
   width: 100%;
+  text-align: center;
 }
 
 .table__title {
+  font-size: 25px;
   padding: 10px;
 }
 
 .table__data {
+  font-size: 20px;
   padding: 10px;
 }
 
@@ -141,11 +149,98 @@ li[data-link='true']::after {
 }
 
 .table-text {
-  font-size: 18px;
+  font-size: 22px;
   text-transform: uppercase;
   font-weight: 600;
 }
 
 .trumb-for-scheme {
+  max-width: 1000px;
   border: 5px solid black;
+}
+
+.trumb-for-scheme:not(:first-child) {
+  margin-top: 20px;
+}
+
+.window__scheme--button {
+  cursor: pointer;
+  border: 2px solid black;
+  outline: none;
+}
+
+/*! ===========================Lightbox======================= */
+
+.backdrop {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--animation-duration) var(--timing-function);
+}
+
+.backdrop.is-open {
+  opacity: 1;
+  pointer-events: initial;
+}
+
+.backdrop__overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.8);
+}
+
+.backdrop__content {
+  transform: scale(0.95);
+  transition: transform var(--animation-duration) var(--timing-function);
+}
+
+.backdrop.is-open .backdrop__content {
+  transform: scale(1);
+}
+
+.backdrop__image {
+  display: block;
+  width: auto;
+  height: auto;
+  max-height: 100vh;
+  max-width: 100vw;
+}
+
+.backdrop__button {
+  position: absolute;
+  top: 25px;
+  right: 25px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  margin: 0;
+  border: none;
+  border-radius: 50%;
+  background-color: transparent;
+  color: #fff;
+  cursor: pointer;
+  transition: background-color var(--animation-duration) var(--timing-function);
+  outline: none;
+  background-image: url('../images/icon-close.svg');
+  background-position: center;
+  background-size: 60%;
+  background-repeat: no-repeat;
+}
+
+.backdrop__button:hover,
+.backdrop__button:focus {
+  background-color: rgba(0, 0, 0, 0.5);
 }
